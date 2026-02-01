@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Valentine</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <main class="wrap">
+    <section class="card" id="card">
+
+      <div class="icon">
+        <div class="face">
+          <span class="eye left"></span>
+          <span class="eye right"></span>
+          <span class="mouth"></span>
+        </div>
+        <div class="heart"></div>
+      </div>
+
+      <h1 class="title">
+        <span id="name">Bubo,</span>, da li bi bila moj valentine?
+      </h1>
+
+      <div class="btn-row" id="btnRow">
+        <button class="btn yes" id="yesBtn">DA</button>
+        <button class="btn no" id="noBtn">NE</button>
+      </div>
+
+      <p class="hint">ne bih kliknuo NE :D</p>
+
+      <div class="result" id="result">
+        <!-- OVDE IDE TVOJ GIF -->
+        <img id="yesGif" class="yes-gif" src="assets/valentine.gif" alt="gif" />
+      </div>
+
+    </section>
+  </main>
+
+<script>
+const GIRL_NAME = "Buba"; // promeni ime
+document.getElementById("name").textContent = GIRL_NAME;
+
+const btnRow = document.getElementById("btnRow");
+const noBtn  = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const result = document.getElementById("result");
+const yesGif = document.getElementById("yesGif");
+
+let noX = 260, noY = 10;
+
+function setNoPos(x,y){
+  noX=x; noY=y;
+  noBtn.style.transform = `translate(${noX}px, ${noY}px)`;
+}
+
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+
+function randomNoPos(){
+  const area = btnRow.getBoundingClientRect();
+  const padding = 12;
+  const maxX = area.width - noBtn.offsetWidth - padding;
+  const maxY = area.height - noBtn.offsetHeight - padding;
+
+  setNoPos(
+    clamp(Math.random()*maxX, padding, maxX),
+    clamp(Math.random()*maxY, padding, maxY)
+  );
+}
+
+// NE beži čim se približiš
+function repel(e){
+  const rect = noBtn.getBoundingClientRect();
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top + rect.height/2;
+
+  const dx = cx - e.clientX;
+  const dy = cy - e.clientY;
+  const dist = Math.hypot(dx,dy);
+
+  if(dist < 150){
+    randomNoPos();
+  }
+}
+
+btnRow.addEventListener("mousemove", repel);
+noBtn.addEventListener("mouseenter", randomNoPos);
+noBtn.addEventListener("mousedown", (e)=>{e.preventDefault(); randomNoPos();});
+noBtn.setAttribute("tabindex","-1");
+
+// DA klik
+yesBtn.addEventListener("click", ()=>{
+  yesGif.classList.add("show");
+  result.insertAdjacentHTML("beforeend", `
+    <div class="result-box">
+      <div class="big">💘 JUPIII! 💘</div>
+      <div>Vidimo se za Dan zaljubljenih 😉</div>
+    </div>
+  `);
+  noBtn.style.display="none";
+});
+</script>
+
+</body>
+</html>
